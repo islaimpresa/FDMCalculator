@@ -88,6 +88,42 @@
   .topbar-actions{display:flex;align-items:center;flex-wrap:wrap;gap:4px;}
   .cta{margin-top:14px;text-align:center;font-size:14px;}
   .cta a{color:var(--accent);font-weight:600;text-decoration:none;}
+  /* quick-fill chips */
+  .chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px}
+  .chips .lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:2px}
+  .chip-btn{background:var(--panel-2);color:var(--muted);border:1px solid var(--line);
+    border-radius:20px;padding:3px 10px;font-size:.76rem;cursor:pointer}
+  .chip-btn:hover{border-color:var(--accent);color:var(--ink)}
+  /* presets bar */
+  .preset-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;box-shadow:var(--shadow)}
+  .preset-bar .lbl{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .preset-bar select{background:var(--field);border:1px solid var(--line);color:var(--ink);
+    border-radius:7px;padding:6px 9px;font-size:.85rem;min-width:130px}
+  .preset-bar button{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);
+    border-radius:7px;padding:6px 10px;font-size:.8rem;cursor:pointer}
+  .preset-bar button:hover{border-color:var(--accent)}
+  .preset-bar button.danger:hover{border-color:#c0392b;color:#c0392b}
+  /* batch row */
+  .batch-line{display:flex;justify-content:space-between;align-items:center;margin-top:6px;
+    padding-top:10px;border-top:1px dashed var(--line);font-size:.95rem;color:var(--muted)}
+  .batch-line b{color:var(--ink);font-family:ui-monospace,Consolas,monospace}
+  .grand{display:flex;justify-content:space-between;align-items:center;margin-top:10px;
+    padding:12px 0 2px;border-top:2px solid var(--accent)}
+  .grand span{font-weight:600;color:var(--ink)}
+  .grand b{font-size:1.5rem;color:var(--accent);font-family:ui-monospace,Consolas,monospace}
+  /* breakdown bar */
+  .bd-wrap{margin:14px 0 4px}
+  .bd-title{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+  .bd-bar{display:flex;height:22px;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+  .bd-seg{height:100%}
+  .bd-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:.76rem;color:var(--muted)}
+  .bd-legend span{display:flex;align-items:center;gap:5px}
+  .bd-dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  /* copy button */
+  .copybtn{margin-top:10px;width:100%;background:var(--panel-2);color:var(--ink);
+    border:1px solid var(--line);border-radius:8px;padding:10px;font-size:.9rem;cursor:pointer}
+  .copybtn:hover{border-color:var(--accent)}
 </style>
 
 </head>
@@ -106,6 +142,13 @@
   </div>
   <p class="sub"><b id="slogan">Technical Mastery. Creative Design. Made in Puerto Rico.</b><br><span id="subtext">Calculate the real cost and selling price of your printed parts.</span></p>
 
+  <div class="preset-bar">
+    <span class="lbl" id="presetLbl">Preset:</span>
+    <select id="presetSelect" onchange="loadPreset()"><option value="">—</option></select>
+    <button onclick="savePreset()" id="btnSavePreset">+ Save current</button>
+    <button class="danger" onclick="deletePreset()" id="btnDelPreset">Delete</button>
+  </div>
+
   <div class="toolbar">
     <button onclick="save()" id="btnSave">💾 Save</button>
     <button onclick="load()" id="btnLoad">📁 Load</button>
@@ -117,7 +160,15 @@
     <div class="field"><label id="lblCurrency">Currency</label>
       <select id="currency" onchange="onCurrencyChange()"></select>
     </div>
-    <div class="field"><label id="lblWeight">Part weight (grams)</label><input id="weight" type="number" step="0.1" value="50"></div>
+    <div class="field"><label id="lblWeight">Part weight (grams)</label><input id="weight" type="number" step="0.1" value="50">
+      <div class="chips"><span class="lbl" id="wChipLbl">Quick:</span>
+        <span class="chip-btn" onclick="setVal('weight',10)">10</span>
+        <span class="chip-btn" onclick="setVal('weight',25)">25</span>
+        <span class="chip-btn" onclick="setVal('weight',50)">50</span>
+        <span class="chip-btn" onclick="setVal('weight',100)">100</span>
+        <span class="chip-btn" onclick="setVal('weight',250)">250</span>
+      </div>
+    </div>
     <div class="field"><label id="lblHours">Print time</label>
       <div class="time-row">
         <div class="time-cell"><span class="unit" id="unitPrintHrs">hours</span><input id="hours" type="number" step="1" min="0" value="3"></div>
@@ -125,7 +176,15 @@
       </div>
     </div>
     <div class="field"><label id="lblKwh">Energy cost (per kWh)</label><input id="kwhCost" type="number" step="0.01" value="0.25"></div>
-    <div class="field"><label id="lblWatts">Printer consumption (watts)</label><input id="watts" type="number" step="1" value="120"></div>
+    <div class="field"><label id="lblWatts">Printer consumption (watts)</label><input id="watts" type="number" step="1" value="120">
+      <div class="chips"><span class="lbl" id="watChipLbl">Quick:</span>
+        <span class="chip-btn" onclick="setVal('watts',60)">60</span>
+        <span class="chip-btn" onclick="setVal('watts',100)">100</span>
+        <span class="chip-btn" onclick="setVal('watts',150)">150</span>
+        <span class="chip-btn" onclick="setVal('watts',250)">250</span>
+        <span class="chip-btn" onclick="setVal('watts',350)">350</span>
+      </div>
+    </div>
     <div class="field"><label id="lblLabor">Labor rate (per hour)</label>
       <div class="input-prefix"><span class="sym" id="laborSym">$</span><input id="laborHour" type="number" step="0.01" value="0"></div>
     </div>
@@ -140,13 +199,39 @@
     <div class="field"><label id="lblRecover">Hours to recover investment</label><input id="recoverHours" type="number" step="1" value="3000"></div>
     <div class="field"><label id="lblFail">% Error / failure margin</label><input id="failPct" type="number" step="0.1" value="10"></div>
     <div class="field"><label id="lblProfit">Profit margin (%)</label><input id="profitPct" type="number" step="0.1" value="50"></div>
+    <div class="field"><label id="lblQty">Quantity</label><input id="qty" type="number" step="1" min="1" value="1">
+      <div class="chips"><span class="lbl" id="qChipLbl">Quick:</span>
+        <span class="chip-btn" onclick="setVal('qty',1)">1</span>
+        <span class="chip-btn" onclick="setVal('qty',5)">5</span>
+        <span class="chip-btn" onclick="setVal('qty',10)">10</span>
+        <span class="chip-btn" onclick="setVal('qty',25)">25</span>
+        <span class="chip-btn" onclick="setVal('qty',50)">50</span>
+      </div>
+    </div>
+    <div class="field"><label id="lblBulk">Bulk discount (%)</label><input id="bulkPct" type="number" step="0.1" min="0" value="0"></div>
+    <div class="field"><label id="lblRound">Round price to</label>
+      <select id="rounding">
+        <option value="0">No rounding</option>
+        <option value="0.5">0.50</option>
+        <option value="1">1</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+      </select>
+    </div>
   </div>
 
   <button class="calc" onclick="calc()" id="btnCalc">Calculate cost</button>
 
   <div class="result" id="result">
-    <div class="total"><span id="lblFinal">Suggested selling price</span><b id="finalPrice">$0.00</b></div>
+    <div class="total"><span id="lblFinal">Unit price (suggested)</span><b id="finalPrice">$0.00</b></div>
     <div class="lines" id="lines"></div>
+    <div class="bd-wrap" id="bdWrap">
+      <div class="bd-title" id="bdTitle">Cost breakdown</div>
+      <div class="bd-bar" id="bdBar"></div>
+      <div class="bd-legend" id="bdLegend"></div>
+    </div>
+    <div id="batchBlock"></div>
+    <button class="copybtn" onclick="copyQuote()" id="btnCopy">📋 Copy quote text</button>
     <button class="pdfbtn" onclick="exportPDF()" id="btnPDF">📄 Export PDF</button>
   </div>
 
@@ -190,8 +275,15 @@
       hours:"Print time", kwh:"Energy cost (per kWh)", watts:"Printer consumption (watts)",
       labor:"Labor rate (per hour)", laborHours:"Labor time", unitHrs:"hours", unitMin:"minutes", extras:"Extra materials cost", machine:"Machine cost",
       recover:"Hours to recover investment", fail:"% Error / failure margin", profit:"Profit margin (%)",
-      calc:"Calculate cost", final:"Suggested selling price",
+      calc:"Calculate cost", final:"Unit price (suggested)",
       pdf:"📄 Export PDF",
+      qty:"Quantity", bulk:"Bulk discount (%)", round:"Round price to", quick:"Quick:",
+      presetLbl:"Preset:", savePreset:"+ Save current", delPreset:"Delete",
+      presetName:"Name this preset (e.g. Bambu A1 + PLA):", presetExists:"A preset with that name was overwritten.",
+      noPreset:"Select a preset to delete.", confirmDelPreset:"Delete this preset?",
+      bdTitle:"Cost breakdown", copy:"📋 Copy quote text", copied:"✓ Copied to clipboard",
+      unitPrice:"Unit price", batchSub:"Subtotal", batchDisc:"Bulk discount", grandTotal:"Total",
+      marginNote:"margin", quoteFor:"Quote for", quoteUnit:"each",
       cta:'Need something printed? → ',
       footer:"© Isla Impresa · 3D Printing & Custom Design · Ponce, Puerto Rico",
       themeDark:"🌙 Dark", themeLight:"☀️ Light",
@@ -212,8 +304,15 @@
       hours:"Tiempo de impresión", kwh:"Costo de energía (por kWh)", watts:"Consumo de impresora (watts)",
       labor:"Tarifa de mano de obra (por hora)", laborHours:"Tiempo de mano de obra", unitHrs:"horas", unitMin:"minutos", extras:"Costos materiales extra", machine:"Costo de la máquina",
       recover:"Horas para recuperar inversión", fail:"% Margen de error / falla", profit:"Margen de ganancia (%)",
-      calc:"Calcular costo", final:"Precio de venta sugerido",
+      calc:"Calcular costo", final:"Precio unitario (sugerido)",
       pdf:"📄 Exportar PDF",
+      qty:"Cantidad", bulk:"Descuento por volumen (%)", round:"Redondear precio a", quick:"Rápido:",
+      presetLbl:"Perfil:", savePreset:"+ Guardar actual", delPreset:"Eliminar",
+      presetName:"Nombra este perfil (ej. Bambu A1 + PLA):", presetExists:"Se sobrescribió un perfil con ese nombre.",
+      noPreset:"Selecciona un perfil para eliminar.", confirmDelPreset:"¿Eliminar este perfil?",
+      bdTitle:"Desglose de costos", copy:"📋 Copiar cotización", copied:"✓ Copiado al portapapeles",
+      unitPrice:"Precio unitario", batchSub:"Subtotal", batchDisc:"Descuento por volumen", grandTotal:"Total",
+      marginNote:"margen", quoteFor:"Cotización para", quoteUnit:"c/u",
       cta:'¿Necesitas algo impreso? → ',
       footer:"© Isla Impresa · Impresión 3D y Diseño Personalizado · Ponce, Puerto Rico",
       themeDark:"🌙 Oscuro", themeLight:"☀️ Claro",
@@ -227,13 +326,16 @@
     }
   };
 
-  const ids=["filamentKg","weight","hours","printMinutes","kwhCost","watts","laborHour","laborHours","laborMinutes","extras","machineCost","recoverHours","failPct","profitPct"];
+  const ids=["filamentKg","weight","hours","printMinutes","kwhCost","watts","laborHour","laborHours","laborMinutes","extras","machineCost","recoverHours","failPct","profitPct","qty","bulkPct","rounding"];
+  const PRESET_KEY="islaImpresaCalcPresets";
+  const BD_COLORS={rMat:"#249aa8",rEnergy:"#e0a458",rLabor:"#8e6fd8",rExtras:"#5fb37a",rDeprec:"#c0607a"};
   let lastCalc=null;
   let lang="en";
   let cur=CURRENCIES[0];
   const STORE_KEY="islaImpresaCalc";
 
   const num=id=>parseFloat(document.getElementById(id).value)||0;
+  function setVal(id,v){document.getElementById(id).value=v;if(lastCalc)calc();}
   function fmt(v){
     return cur.sym+v.toLocaleString(cur.locale,{minimumFractionDigits:2,maximumFractionDigits:2})+" "+cur.code;
   }
@@ -299,6 +401,17 @@
     g("lblRecover").textContent=t("recover");
     g("lblFail").textContent=t("fail");
     g("lblProfit").textContent=t("profit");
+    g("lblQty").textContent=t("qty");
+    g("lblBulk").textContent=t("bulk");
+    g("lblRound").textContent=t("round");
+    g("wChipLbl").textContent=t("quick");
+    g("watChipLbl").textContent=t("quick");
+    g("qChipLbl").textContent=t("quick");
+    g("presetLbl").textContent=t("presetLbl");
+    g("btnSavePreset").textContent=t("savePreset");
+    g("btnDelPreset").textContent=t("delPreset");
+    g("bdTitle").textContent=t("bdTitle");
+    g("btnCopy").textContent=t("copy");
     g("btnCalc").textContent=t("calc");
     g("lblFinal").textContent=t("final");
     g("btnPDF").textContent=t("pdf");
@@ -317,6 +430,11 @@
     document.getElementById("logo").src=dark?LOGO:LOGO_DARK;
   }
 
+  function roundPrice(v){
+    const step=parseFloat(document.getElementById("rounding").value)||0;
+    if(step<=0)return v;
+    return Math.ceil(v/step)*step; // round up to clean number
+  }
   function calc(){
     const filamentKg=num("filamentKg"), weight=num("weight"), hours=num("hours")+num("printMinutes")/60;
     const kwhCost=num("kwhCost"), watts=num("watts"), laborHour=num("laborHour"), laborHours=num("laborHours"), laborMinutes=num("laborMinutes");
@@ -329,15 +447,27 @@
     const baseCost=matCost+energyCost+laborCost+extras+deprec;
     const withFail=baseCost*(1+failPct/100);
     const profit=withFail*(profitPct/100);
-    const finalPrice=withFail+profit;
-    lastCalc={matCost,energyCost,laborCost,extras,deprec,baseCost,withFail,profit,finalPrice,failPct,profitPct};
+    const rawPrice=withFail+profit;
+    const unitPrice=roundPrice(rawPrice);
+    // batch
+    const qty=Math.max(1,Math.round(num("qty"))||1);
+    const bulkPct=Math.max(0,num("bulkPct"));
+    const subtotal=unitPrice*qty;
+    const discount=subtotal*(bulkPct/100);
+    const grandTotal=subtotal-discount;
+    // margin (on the unit price, after rounding): profit portion vs price
+    const unitCost=withFail; // total cost incl. failure margin
+    const marginPct=unitPrice>0?((unitPrice-unitCost)/unitPrice)*100:0;
+    lastCalc={matCost,energyCost,laborCost,extras,deprec,baseCost,withFail,profit,
+      rawPrice,unitPrice,failPct,profitPct,qty,bulkPct,subtotal,discount,grandTotal,unitCost,marginPct};
     renderResult();
   }
 
   function renderResult(){
     const c=lastCalc; if(!c)return;
-    document.getElementById("finalPrice").textContent=fmt(c.finalPrice);
-    document.getElementById("lines").innerHTML=`
+    const g=id=>document.getElementById(id);
+    g("finalPrice").textContent=fmt(c.unitPrice);
+    g("lines").innerHTML=`
       <div class="row"><span>${t("rMat")}</span><b>${fmt(c.matCost)}</b></div>
       <div class="row"><span>${t("rEnergy")}</span><b>${fmt(c.energyCost)}</b></div>
       <div class="row"><span>${t("rLabor")}</span><b>${fmt(c.laborCost)}</b></div>
@@ -346,8 +476,30 @@
       <div class="row sub"><span>${t("rBase")}</span><b>${fmt(c.baseCost)}</b></div>
       <div class="row"><span>${t("rFail")} (${c.failPct}%)</span><b>${fmt(c.withFail-c.baseCost)}</b></div>
       <div class="row sub"><span>${t("rTotal")}</span><b>${fmt(c.withFail)}</b></div>
-      <div class="row"><span>${t("rProfit")} (${c.profitPct}%)</span><b>${fmt(c.profit)}</b></div>`;
-    document.getElementById("result").classList.add("show");
+      <div class="row"><span>${t("rProfit")} (${c.profitPct}%) · ${c.marginPct.toFixed(0)}% ${t("marginNote")}</span><b>${fmt(c.unitPrice-c.unitCost)}</b></div>`;
+    renderBreakdown(c);
+    renderBatch(c);
+    g("result").classList.add("show");
+  }
+
+  function renderBreakdown(c){
+    const segs=[["rMat",c.matCost],["rEnergy",c.energyCost],["rLabor",c.laborCost],
+      ["rExtras",c.extras],["rDeprec",c.deprec]];
+    const total=segs.reduce((a,[,v])=>a+v,0)||1;
+    document.getElementById("bdBar").innerHTML=segs.map(([k,v])=>{
+      const pct=(v/total)*100;
+      return pct>0?`<div class="bd-seg" style="width:${pct}%;background:${BD_COLORS[k]}" title="${t(k)}: ${pct.toFixed(0)}%"></div>`:"";
+    }).join("");
+    document.getElementById("bdLegend").innerHTML=segs.filter(([,v])=>v>0).map(([k,v])=>
+      `<span><span class="bd-dot" style="background:${BD_COLORS[k]}"></span>${t(k)} ${((v/total)*100).toFixed(0)}%</span>`).join("");
+  }
+
+  function renderBatch(c){
+    if(c.qty<=1 && c.bulkPct<=0){document.getElementById("batchBlock").innerHTML="";return;}
+    let html=`<div class="batch-line"><span>${t("unitPrice")} × ${c.qty}</span><b>${fmt(c.subtotal)}</b></div>`;
+    if(c.bulkPct>0)html+=`<div class="batch-line"><span>${t("batchDisc")} (${c.bulkPct}%)</span><b>−${fmt(c.discount)}</b></div>`;
+    html+=`<div class="grand"><span>${t("grandTotal")}</span><b>${fmt(c.grandTotal)}</b></div>`;
+    document.getElementById("batchBlock").innerHTML=html;
   }
 
   // ---- Persistence (values + lang + currency) ----
@@ -370,11 +522,67 @@
     calc();
   }
   function reset(){
-    const d={filamentKg:25,weight:50,hours:3,printMinutes:0,kwhCost:0.25,watts:120,laborHour:0,laborHours:0,laborMinutes:0,extras:0,machineCost:0,recoverHours:3000,failPct:10,profitPct:50};
+    const d={filamentKg:25,weight:50,hours:3,printMinutes:0,kwhCost:0.25,watts:120,laborHour:0,laborHours:0,laborMinutes:0,extras:0,machineCost:0,recoverHours:3000,failPct:10,profitPct:50,qty:1,bulkPct:0,rounding:"0"};
     ids.forEach(i=>document.getElementById(i).value=d[i]);
     try{localStorage.removeItem(STORE_KEY);}catch(e){}
     document.getElementById("result").classList.remove("show");
     lastCalc=null;
+  }
+
+  // ---- Named presets (printer + material profiles) ----
+  function getPresets(){
+    try{const raw=localStorage.getItem(PRESET_KEY);if(raw)return JSON.parse(raw);}catch(e){}
+    return {};
+  }
+  function setPresets(p){try{localStorage.setItem(PRESET_KEY,JSON.stringify(p));}catch(e){}}
+  function buildPresetOptions(sel){
+    const p=getPresets();const names=Object.keys(p).sort();
+    const dd=document.getElementById("presetSelect");
+    dd.innerHTML='<option value="">—</option>'+names.map(n=>`<option value="${n.replace(/"/g,'&quot;')}">${n}</option>`).join("");
+    if(sel && p[sel])dd.value=sel;
+  }
+  function savePreset(){
+    const name=prompt(t("presetName"));if(name===null)return;
+    const nm=name.trim();if(!nm)return;
+    const p=getPresets();
+    const data={};ids.forEach(i=>data[i]=document.getElementById(i).value);
+    p[nm]=data;setPresets(p);buildPresetOptions(nm);
+  }
+  function loadPreset(){
+    const nm=document.getElementById("presetSelect").value;if(!nm)return;
+    const p=getPresets();const data=p[nm];if(!data)return;
+    ids.forEach(i=>{if(data[i]!==undefined)document.getElementById(i).value=data[i];});
+    calc();persist();
+  }
+  function deletePreset(){
+    const nm=document.getElementById("presetSelect").value;
+    if(!nm){alert(t("noPreset"));return;}
+    if(!confirm(t("confirmDelPreset")))return;
+    const p=getPresets();delete p[nm];setPresets(p);buildPresetOptions();
+  }
+
+  // ---- Copy quote text ----
+  function copyQuote(){
+    if(!lastCalc){alert(t("calcFirst"));return;}
+    const c=lastCalc;
+    let lines=[];
+    lines.push("Isla Impresa — "+t("pdfTitle"));
+    lines.push(t("unitPrice")+": "+fmt(c.unitPrice));
+    if(c.qty>1 || c.bulkPct>0){
+      lines.push(t("unitPrice")+" × "+c.qty+": "+fmt(c.subtotal));
+      if(c.bulkPct>0)lines.push(t("batchDisc")+" ("+c.bulkPct+"%): −"+fmt(c.discount));
+      lines.push(t("grandTotal")+": "+fmt(c.grandTotal));
+    }
+    lines.push("instagram.com/islaimpresa");
+    const text=lines.join("\\n");
+    const done=()=>{const b=document.getElementById("btnCopy");const o=b.textContent;b.textContent=t("copied");setTimeout(()=>b.textContent=o,1600);};
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done,()=>fallbackCopy(text,done));
+    }else fallbackCopy(text,done);
+  }
+  function fallbackCopy(text,done){
+    const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);
+    ta.select();try{document.execCommand("copy");done();}catch(e){}document.body.removeChild(ta);
   }
 
   function exportPDF(){
@@ -399,7 +607,15 @@
     doc.setDrawColor(...teal);doc.line(14,y,196,y);y+=12;
     doc.setFontSize(15);doc.setTextColor(...teal);
     doc.text(t("pdfSuggested"),16,y);
-    doc.text(fmt(c.finalPrice),196,y,{align:"right"});
+    doc.text(fmt(c.unitPrice),196,y,{align:"right"});
+    // batch section if applicable
+    if(c.qty>1 || c.bulkPct>0){
+      y+=12;doc.setFontSize(11);doc.setTextColor(30,40,45);
+      doc.text(t("unitPrice")+" \u00D7 "+c.qty,16,y);doc.text(fmt(c.subtotal),196,y,{align:"right"});
+      if(c.bulkPct>0){y+=8;doc.text(t("batchDisc")+" ("+c.bulkPct+"%)",16,y);doc.text("\u2212"+fmt(c.discount),196,y,{align:"right"});}
+      y+=11;doc.setFontSize(15);doc.setTextColor(...teal);
+      doc.text(t("grandTotal"),16,y);doc.text(fmt(c.grandTotal),196,y,{align:"right"});
+    }
     y+=20;doc.setFontSize(9);doc.setTextColor(120,120,120);
     doc.text("instagram.com/islaimpresa  |  facebook.com/Islaimpresa",16,y);
     const d=new Date().toISOString().slice(0,10);
@@ -416,6 +632,7 @@
       if(data.__lang==="es")lang="es";
     }
     setLang(lang);     // applies labels + builds currency options
+    buildPresetOptions();
   })();
 </script>
 </body>
