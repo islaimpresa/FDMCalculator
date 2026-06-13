@@ -46,6 +46,16 @@
   .field input,.field select{width:100%;background:var(--field);border:1px solid var(--line);
     color:var(--ink);border-radius:7px;padding:9px 10px;font-size:1rem;font-family:ui-monospace,Consolas,monospace}
   .field input:focus,.field select:focus{outline:none;border-color:var(--accent)}
+  .input-prefix{display:flex;align-items:center;background:var(--field);border:1px solid var(--line);
+    border-radius:7px;overflow:hidden}
+  .input-prefix:focus-within{border-color:var(--accent)}
+  .input-prefix .sym{padding:9px 4px 9px 10px;color:var(--muted);font-size:1rem;
+    font-family:ui-monospace,Consolas,monospace;white-space:nowrap}
+  .input-prefix input{border:none;border-radius:0;background:transparent;padding-left:4px}
+  .input-prefix input:focus{border:none}
+  .time-row{display:flex;gap:8px}
+  .time-cell{flex:1;display:flex;flex-direction:column}
+  .time-cell .unit{font-size:.68rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
   .calc{margin-top:18px;width:100%;background:linear-gradient(135deg,var(--accent),var(--accent-2));
     color:#fff;border:none;border-radius:10px;padding:14px;font-size:1.05rem;font-weight:700;
     cursor:pointer;letter-spacing:.02em}
@@ -111,8 +121,15 @@
     <div class="field"><label id="lblHours">Print time (hours)</label><input id="hours" type="number" step="0.1" value="3"></div>
     <div class="field"><label id="lblKwh">Energy cost (per kWh)</label><input id="kwhCost" type="number" step="0.01" value="0.25"></div>
     <div class="field"><label id="lblWatts">Printer consumption (watts)</label><input id="watts" type="number" step="1" value="120"></div>
-    <div class="field"><label id="lblLabor">Labor rate (per hour)</label><input id="laborHour" type="number" step="0.01" value="0"></div>
-    <div class="field"><label id="lblLaborHours">Labor hours</label><input id="laborHours" type="number" step="0.1" value="0"></div>
+    <div class="field"><label id="lblLabor">Labor rate (per hour)</label>
+      <div class="input-prefix"><span class="sym" id="laborSym">$</span><input id="laborHour" type="number" step="0.01" value="0"></div>
+    </div>
+    <div class="field"><label id="lblLaborHours">Labor time</label>
+      <div class="time-row">
+        <div class="time-cell"><span class="unit" id="unitHrs">hours</span><input id="laborHours" type="number" step="1" min="0" value="0"></div>
+        <div class="time-cell"><span class="unit" id="unitMin">minutes</span><input id="laborMinutes" type="number" step="1" min="0" max="59" value="0"></div>
+      </div>
+    </div>
     <div class="field"><label id="lblExtras">Extra materials cost</label><input id="extras" type="number" step="0.01" value="0"></div>
     <div class="field"><label id="lblMachine">Machine cost</label><input id="machineCost" type="number" step="0.01" value="0"></div>
     <div class="field"><label id="lblRecover">Hours to recover investment</label><input id="recoverHours" type="number" step="1" value="3000"></div>
@@ -166,7 +183,7 @@
       save:"💾 Save", load:"📁 Load", reset:"🔄 Reset",
       filament:"Filament cost (per kg)", currency:"Currency", weight:"Part weight (grams)",
       hours:"Print time (hours)", kwh:"Energy cost (per kWh)", watts:"Printer consumption (watts)",
-      labor:"Labor rate (per hour)", laborHours:"Labor hours", extras:"Extra materials cost", machine:"Machine cost",
+      labor:"Labor rate (per hour)", laborHours:"Labor time", unitHrs:"hours", unitMin:"minutes", extras:"Extra materials cost", machine:"Machine cost",
       recover:"Hours to recover investment", fail:"% Error / failure margin", profit:"Profit margin (%)",
       calc:"Calculate cost", final:"Suggested selling price",
       pdf:"📄 Export PDF",
@@ -188,7 +205,7 @@
       save:"💾 Guardar", load:"📁 Cargar", reset:"🔄 Reset",
       filament:"Costo del filamento (por kg)", currency:"Moneda", weight:"Peso de la pieza (gramos)",
       hours:"Tiempo de impresión (horas)", kwh:"Costo de energía (por kWh)", watts:"Consumo de impresora (watts)",
-      labor:"Tarifa de mano de obra (por hora)", laborHours:"Horas de mano de obra", extras:"Costos materiales extra", machine:"Costo de la máquina",
+      labor:"Tarifa de mano de obra (por hora)", laborHours:"Tiempo de mano de obra", unitHrs:"horas", unitMin:"minutos", extras:"Costos materiales extra", machine:"Costo de la máquina",
       recover:"Horas para recuperar inversión", fail:"% Margen de error / falla", profit:"Margen de ganancia (%)",
       calc:"Calcular costo", final:"Precio de venta sugerido",
       pdf:"📄 Exportar PDF",
@@ -205,7 +222,7 @@
     }
   };
 
-  const ids=["filamentKg","weight","hours","kwhCost","watts","laborHour","laborHours","extras","machineCost","recoverHours","failPct","profitPct"];
+  const ids=["filamentKg","weight","hours","kwhCost","watts","laborHour","laborHours","laborMinutes","extras","machineCost","recoverHours","failPct","profitPct"];
   let lastCalc=null;
   let lang="en";
   let cur=CURRENCIES[0];
@@ -229,8 +246,13 @@
     });
     sel.value=String(CURRENCIES.indexOf(cur));
   }
+  function updateLaborSym(){
+    const el=document.getElementById("laborSym");
+    if(el)el.textContent=cur.sym;
+  }
   function onCurrencyChange(){
     cur=CURRENCIES[parseInt(document.getElementById("currency").value,10)]||CURRENCIES[0];
+    updateLaborSym();
     if(lastCalc)renderResult();
     persist();
   }
@@ -262,6 +284,9 @@
     g("lblWatts").textContent=t("watts");
     g("lblLabor").textContent=t("labor");
     g("lblLaborHours").textContent=t("laborHours");
+    g("unitHrs").textContent=t("unitHrs");
+    g("unitMin").textContent=t("unitMin");
+    updateLaborSym();
     g("lblExtras").textContent=t("extras");
     g("lblMachine").textContent=t("machine");
     g("lblRecover").textContent=t("recover");
@@ -287,12 +312,12 @@
 
   function calc(){
     const filamentKg=num("filamentKg"), weight=num("weight"), hours=num("hours");
-    const kwhCost=num("kwhCost"), watts=num("watts"), laborHour=num("laborHour"), laborHours=num("laborHours");
+    const kwhCost=num("kwhCost"), watts=num("watts"), laborHour=num("laborHour"), laborHours=num("laborHours"), laborMinutes=num("laborMinutes");
     const extras=num("extras"), machineCost=num("machineCost"), recoverHours=num("recoverHours");
     const failPct=num("failPct"), profitPct=num("profitPct");
     const matCost=(filamentKg/1000)*weight;
     const energyCost=(watts/1000)*hours*kwhCost;
-    const laborCost=laborHour*laborHours;
+    const laborCost=laborHour*(laborHours+laborMinutes/60);
     const deprec=(recoverHours>0?machineCost/recoverHours:0)*hours;
     const baseCost=matCost+energyCost+laborCost+extras+deprec;
     const withFail=baseCost*(1+failPct/100);
@@ -338,7 +363,7 @@
     calc();
   }
   function reset(){
-    const d={filamentKg:25,weight:50,hours:3,kwhCost:0.25,watts:120,laborHour:0,laborHours:0,extras:0,machineCost:0,recoverHours:3000,failPct:10,profitPct:50};
+    const d={filamentKg:25,weight:50,hours:3,kwhCost:0.25,watts:120,laborHour:0,laborHours:0,laborMinutes:0,extras:0,machineCost:0,recoverHours:3000,failPct:10,profitPct:50};
     ids.forEach(i=>document.getElementById(i).value=d[i]);
     try{localStorage.removeItem(STORE_KEY);}catch(e){}
     document.getElementById("result").classList.remove("show");
@@ -349,11 +374,12 @@
     if(!lastCalc){alert(t("calcFirst"));return;}
     const {jsPDF}=window.jspdf; const doc=new jsPDF();
     const teal=[36,154,168];
-    try{doc.addImage(LOGO,"PNG",14,12,30,30);}catch(e){}
-    doc.setFontSize(18);doc.setTextColor(...teal);doc.text("Isla Impresa",50,24);
+    const logoW=40, logoH=logoW*(127/268); // preserve true 268x127 aspect ratio
+    try{doc.addImage(LOGO,"PNG",14,16,logoW,logoH);}catch(e){}
+    doc.setFontSize(18);doc.setTextColor(...teal);doc.text("Isla Impresa",60,24);
     doc.setFontSize(10);doc.setTextColor(95,115,120);
-    doc.text(t("pdfTitle"),50,32);
-    doc.text(t("pdfPlace"),50,38);
+    doc.text(t("pdfTitle"),60,32);
+    doc.text(t("pdfPlace"),60,38);
     doc.setDrawColor(...teal);doc.line(14,48,196,48);
     const c=lastCalc; let y=60;
     const rows=[[t("rMat"),fmt(c.matCost)],[t("rEnergy"),fmt(c.energyCost)],
