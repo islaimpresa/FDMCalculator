@@ -363,7 +363,7 @@
       rFail:"+ Failure margin", rTotal:"Total cost", rProfit:"+ Profit",
       saved:"Settings saved on this device.", noSave:"Could not save in this browser.",
       nothing:"Nothing saved yet.", calcFirst:"Calculate a cost first.",
-      pdfTitle:"FDM Cost Calculator - Quote", pdfPlace:"Ponce, Puerto Rico", copyPrice:"Copy price", reverseMode:"Reverse: Budget → Quantity", reverseLbl:"How many prints for this budget?", budget:"Budget", lblBudget:"Budget ($)", reverseResult:"—", presetLblMat:"Quick presets:", discountLbl:"Bulk discount:", lblMinPrints:"Min prints", lblDiscount:"Discount %", discountMsg:"Enter quantity to apply discount",
+      pdfTitle:"FDM Cost Calculator - Quote", pdfPlace:"Ponce, Puerto Rico", copyPrice:"Copy price", reverseMode:"Reverse: Budget → Quantity", reverseLbl:"How many prints for this budget?", budget:"Budget", lblBudget:"Budget ($)", reverseResult:"—", reverseUnitSing:"print", reverseUnitPlur:"prints", reverseFor:"for", reverseEach:"each", presetLblMat:"Quick presets:", discountLbl:"Bulk discount:", lblMinPrints:"Min prints", lblDiscount:"Discount %", discountMsg:"Enter quantity ≥ {0} to apply discount", discountApplied:"✓ {0}% discount applied!",
       pdfSuggested:"Suggested selling price:"
     },
     es:{
@@ -392,7 +392,7 @@
       rFail:"+ Margen de falla", rTotal:"Costo total", rProfit:"+ Ganancia",
       saved:"Configuración guardada en este dispositivo.", noSave:"No se pudo guardar en este navegador.",
       nothing:"No hay nada guardado todavía.", calcFirst:"Primero calcula un costo.",
-      pdfTitle:"Calculadora de Costos FDM - Cotización", pdfPlace:"Ponce, Puerto Rico", copyPrice:"Copiar precio", reverseMode:"Inverso: Presupuesto → Cantidad", reverseLbl:"¿Cuántas piezas para este presupuesto?", budget:"Presupuesto", lblBudget:"Presupuesto ($)", reverseResult:"—", presetLblMat:"Presets rápidos:", discountLbl:"Descuento por volumen:", lblMinPrints:"Mín. piezas", lblDiscount:"Descuento %", discountMsg:"Ingresa cantidad para aplicar descuento",
+      pdfTitle:"Calculadora de Costos FDM - Cotización", pdfPlace:"Ponce, Puerto Rico", copyPrice:"Copiar precio", reverseMode:"Inverso: Presupuesto → Cantidad", reverseLbl:"¿Cuántas piezas para este presupuesto?", budget:"Presupuesto", lblBudget:"Presupuesto ($)", reverseResult:"—", reverseUnitSing:"pieza", reverseUnitPlur:"piezas", reverseFor:"por", reverseEach:"cada una", presetLblMat:"Presets rápidos:", discountLbl:"Descuento por volumen:", lblMinPrints:"Mín. piezas", lblDiscount:"Descuento %", discountMsg:"Ingresa cantidad ≥ {0} para aplicar descuento", discountApplied:"✓ ¡{0}% descuento aplicado!",
       pdfSuggested:"Precio de venta sugerido:"
     }
   };
@@ -487,6 +487,15 @@
     g("btnCalc").textContent=t("calc");
     g("lblFinal").textContent=t("final");
     g("btnPDF").textContent=t("pdf");
+    g("btnCopyPrice").textContent=t("copyPrice");
+    g("modeLbl").textContent=t("reverseMode");
+    g("reverseLbl").textContent=t("reverseLbl");
+    g("lblBudget").textContent=t("lblBudget");
+    g("presetLblMat").textContent=t("presetLblMat");
+    g("discountLbl").textContent=t("discountLbl");
+    g("lblMinPrints").textContent=t("lblMinPrints");
+    g("lblDiscount").textContent=t("lblDiscount");
+    g("discountMsg").textContent=t("discountMsg");
     g("footerText").textContent=t("footer");
     g("cta").innerHTML=t("cta")+'<a href="https://www.instagram.com/islaimpresa/" target="_blank" rel="noopener">Isla Impresa</a>';
     // theme button reflects current theme
@@ -527,8 +536,8 @@
     // Apply automatic discount if qty meets minimum
     const minPrints=Math.max(1,Math.round(num("minPrints"))||1);
     const autoPct=num("discountPct")||0;
-    if(qty>=minPrints&&autoPct>0){bulkPct=autoPct;document.getElementById("discountMsg").textContent=`✓ ${autoPct}% discount applied!`;}
-    else{document.getElementById("discountMsg").textContent=`Enter quantity ≥ ${minPrints} to apply discount`;}
+    if(qty>=minPrints&&autoPct>0){bulkPct=autoPct;document.getElementById("discountMsg").textContent=t("discountApplied").replace("{0}",autoPct);}
+    else{document.getElementById("discountMsg").textContent=t("discountMsg").replace("{0}",minPrints);}
     const subtotal=unitPrice*qty;
     const discount=subtotal*(bulkPct/100);
     const grandTotal=subtotal-discount;
@@ -733,7 +742,8 @@
     const unitPrice=lastCalc.unitPrice;
     const qty=Math.floor(budget/unitPrice);
     const total=qty*unitPrice;
-    document.getElementById("reverseResult").textContent=`${qty} ${qty===1?"print":"prints"} for ${fmt(total)} (${fmt(unitPrice)} each)`;
+    const printWord=qty===1?t("reverseUnitSing"):t("reverseUnitPlur");
+    document.getElementById("reverseResult").textContent=`${qty} ${printWord} ${t("reverseFor")} ${fmt(total)} (${fmt(unitPrice)} ${t("reverseEach")})`;
   }
 
   function loadPreset(mat){
