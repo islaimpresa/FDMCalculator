@@ -124,6 +124,21 @@
   .copybtn{margin-top:10px;width:100%;background:var(--panel-2);color:var(--ink);
     border:1px solid var(--line);border-radius:8px;padding:10px;font-size:.9rem;cursor:pointer}
   .copybtn:hover{border-color:var(--accent)}
+  /* tool navigation */
+  .toolnav{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px;
+    padding:10px 0 12px;border-bottom:1px solid var(--line);font-size:.9rem}
+  .toolnav a{color:var(--accent);text-decoration:none;font-weight:500;transition:.15s;
+    padding:4px 0;border-bottom:2px solid transparent}
+  .toolnav a:hover{border-bottom-color:var(--accent)}
+  .toolnav .sep{color:var(--line);user-select:none}
+  /* mobile nav compact */
+  @media (max-width:480px){
+    .toolnav{gap:6px;padding:8px 0 10px}
+    .toolnav a{font-size:.8rem;padding:3px 0}
+    .toolnav .sep{margin:0 3px}
+  }
+  /* input validation */
+  input[type="number"]:invalid{background-color:rgba(255,100,100,.05);border-color:var(--line)}
 </style>
 
 </head>
@@ -139,6 +154,15 @@
       <button class="lang-btn" id="langES" onclick="setLang('es')">ES</button>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
     </div>
+  </div>
+  <div class="toolnav">
+    <a href="https://islaimpresa.github.io/" target="_blank" rel="noopener">← Isla Impresa</a>
+    <span class="sep">•</span>
+    <a href="https://islaimpresa.github.io/SLACalculator/" target="_blank" rel="noopener">Resin Calculator</a>
+    <span class="sep">•</span>
+    <a href="https://islaimpresa.github.io/FilamentTracker/" target="_blank" rel="noopener">Filament Tracker</a>
+    <span class="sep">•</span>
+    <a href="https://islaimpresa.github.io/ResinTracker/" target="_blank" rel="noopener">Resin Tracker</a>
   </div>
   <p class="sub"><b id="slogan">Technical Mastery. Creative Design. Made in Puerto Rico.</b><br><span id="subtext">Calculate the real cost and selling price of your printed parts.</span></p>
 
@@ -156,11 +180,11 @@
   </div>
 
   <div class="grid" id="grid">
-    <div class="field"><label id="lblFilament">Filament cost (per kg)</label><input id="filamentKg" type="number" step="0.01" value="25"></div>
+    <div class="field"><label id="lblFilament">Filament cost (per kg)</label><input id="filamentKg" type="number" step="0.01" value="25" min="0"></div>
     <div class="field"><label id="lblCurrency">Currency</label>
       <select id="currency" onchange="onCurrencyChange()"></select>
     </div>
-    <div class="field"><label id="lblWeight">Part weight (grams)</label><input id="weight" type="number" step="0.1" value="50">
+    <div class="field"><label id="lblWeight">Part weight (grams)</label><input id="weight" type="number" step="0.1" value="50" min="0.1" title="Weight of the printed part">
       <div class="chips"><span class="lbl" id="wChipLbl">Quick:</span>
         <span class="chip-btn" onclick="setVal('weight',10)">10</span>
         <span class="chip-btn" onclick="setVal('weight',25)">25</span>
@@ -175,7 +199,7 @@
         <div class="time-cell"><span class="unit" id="unitPrintMin">minutes</span><input id="printMinutes" type="number" step="1" min="0" max="59" value="0"></div>
       </div>
     </div>
-    <div class="field"><label id="lblKwh">Energy cost (per kWh)</label><input id="kwhCost" type="number" step="0.01" value="0.25"></div>
+    <div class="field"><label id="lblKwh">Energy cost (per kWh)</label><input id="kwhCost" type="number" step="0.01" value="0.25" min="0" title="Your local electricity rate per kilowatt-hour"</div>
     <div class="field"><label id="lblWatts">Printer consumption (watts)</label><input id="watts" type="number" step="1" value="120">
       <div class="chips"><span class="lbl" id="watChipLbl">Quick:</span>
         <span class="chip-btn" onclick="setVal('watts',60)">60</span>
@@ -195,10 +219,10 @@
       </div>
     </div>
     <div class="field"><label id="lblExtras">Extra materials cost</label><input id="extras" type="number" step="0.01" value="0"></div>
-    <div class="field"><label id="lblMachine">Machine cost</label><input id="machineCost" type="number" step="0.01" value="0"></div>
-    <div class="field"><label id="lblRecover">Hours to recover investment</label><input id="recoverHours" type="number" step="1" value="3000"></div>
+    <div class="field"><label id="lblMachine">Machine cost</label><input id="machineCost" type="number" step="0.01" value="0" min="0" title="Total cost of your printer (for depreciation)"></div>
+    <div class="field"><label id="lblRecover">Hours to recover investment</label><input id="recoverHours" type="number" step="1" value="3000" min="1" title="Estimated printing hours needed to pay off the machine"></div>
     <div class="field"><label id="lblFail">% Error / failure margin</label><input id="failPct" type="number" step="0.1" value="10"></div>
-    <div class="field"><label id="lblProfit">Profit margin (%)</label><input id="profitPct" type="number" step="0.1" value="50"></div>
+    <div class="field"><label id="lblProfit">Profit margin (%)</label><input id="profitPct" type="number" step="0.1" value="50" min="0.1" title="Weight of the printed part"></div>
     <div class="field"><label id="lblQty">Quantity</label><input id="qty" type="number" step="1" min="1" value="1">
       <div class="chips"><span class="lbl" id="qChipLbl">Quick:</span>
         <span class="chip-btn" onclick="setVal('qty',1)">1</span>
