@@ -170,6 +170,8 @@
     <a href="https://islaimpresa.github.io/FilamentTracker/">Filament Tracker</a>
     <span class="sep">•</span>
     <a href="https://islaimpresa.github.io/ResinTracker/">Resin Tracker</a>
+    <span class="sep">•</span>
+    <a href="https://islaimpresa.github.io/UnitConverter/">Unit Converter</a>
   </div>
   <p class="sub"><b id="slogan">Technical Mastery. Creative Design. Made in Puerto Rico.</b><br><span id="subtext">Calculate the real cost and selling price of your printed parts.</span></p>
 
@@ -243,7 +245,7 @@
     <div class="field"><label id="lblBulk">Bulk discount (%)</label><input id="bulkPct" type="number" step="0.1" min="0" value="0"></div>
     <div class="field"><label id="lblRound">Round price to</label>
       <select id="rounding">
-        <option value="0">No rounding</option>
+        <option value="0" id="roundNoneOpt">No rounding</option>
         <option value="0.5">0.50</option>
         <option value="1">1</option>
         <option value="5">5</option>
@@ -364,7 +366,7 @@
       saved:"Settings saved on this device.", noSave:"Could not save in this browser.",
       nothing:"Nothing saved yet.", calcFirst:"Calculate a cost first.",
       pdfTitle:"FDM Cost Calculator - Quote", pdfPlace:"Ponce, Puerto Rico", copyPrice:"Copy price", reverseMode:"Reverse: Budget → Quantity", reverseLbl:"How many prints for this budget?", budget:"Budget", lblBudget:"Budget ($)", reverseResult:"—", reverseUnitSing:"print", reverseUnitPlur:"prints", reverseFor:"for", reverseEach:"each", presetLblMat:"Quick presets:", discountLbl:"Bulk discount:", lblMinPrints:"Min prints", lblDiscount:"Discount %", discountMsg:"Enter quantity ≥ {0} to apply discount", discountApplied:"✓ {0}% discount applied!",
-      pdfSuggested:"Suggested selling price:"
+      pdfSuggested:"Suggested selling price:", roundNone:"No rounding"
     },
     es:{
       tagline:"// calculadora de costos FDM",
@@ -393,7 +395,7 @@
       saved:"Configuración guardada en este dispositivo.", noSave:"No se pudo guardar en este navegador.",
       nothing:"No hay nada guardado todavía.", calcFirst:"Primero calcula un costo.",
       pdfTitle:"Calculadora de Costos FDM - Cotización", pdfPlace:"Ponce, Puerto Rico", copyPrice:"Copiar precio", reverseMode:"Inverso: Presupuesto → Cantidad", reverseLbl:"¿Cuántas piezas para este presupuesto?", budget:"Presupuesto", lblBudget:"Presupuesto ($)", reverseResult:"—", reverseUnitSing:"pieza", reverseUnitPlur:"piezas", reverseFor:"por", reverseEach:"cada una", presetLblMat:"Presets rápidos:", discountLbl:"Descuento por volumen:", lblMinPrints:"Mín. piezas", lblDiscount:"Descuento %", discountMsg:"Ingresa cantidad ≥ {0} para aplicar descuento", discountApplied:"✓ ¡{0}% descuento aplicado!",
-      pdfSuggested:"Precio de venta sugerido:"
+      pdfSuggested:"Precio de venta sugerido:", roundNone:"Sin redondeo"
     }
   };
 
@@ -445,8 +447,15 @@
     buildCurrencyOptions();
     if(lastCalc){
       calc();  // Re-run calc to update ALL dynamic content including discount message
+    } else {
+      updateDiscountMsg(); // no calc run yet - still keep the idle hint bilingual
     }
     persist();
+  }
+  function updateDiscountMsg(){
+    const minPrints=Math.max(1,Math.round(num("minPrints"))||1);
+    const msg=lang==="es"?`Ingresa cantidad ≥ ${minPrints} para aplicar descuento`:`Enter quantity ≥ ${minPrints} to apply discount`;
+    document.getElementById("discountMsg").textContent=msg;
   }
   function applyLabels(){
     const g=id=>document.getElementById(id);
@@ -477,6 +486,7 @@
     g("lblQty").textContent=t("qty");
     g("lblBulk").textContent=t("bulk");
     g("lblRound").textContent=t("round");
+    g("roundNoneOpt").textContent=t("roundNone");
     g("wChipLbl").textContent=t("quick");
     g("watChipLbl").textContent=t("quick");
     g("qChipLbl").textContent=t("quick");
@@ -510,6 +520,7 @@
     r.setAttribute("data-theme",dark?"light":"dark");
     document.getElementById("themeBtn").textContent=dark?t("themeDark"):t("themeLight");
     document.getElementById("logo").src=dark?LOGO:LOGO_DARK;
+    try{localStorage.setItem("islaTheme",dark?"light":"dark");}catch(e){}
   }
 
   function roundPrice(v){
@@ -601,6 +612,7 @@
     const data={};ids.forEach(i=>data[i]=document.getElementById(i).value);
     data.__lang=lang; data.__cur=cur.code;
     try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}
+    try{localStorage.setItem("islaLang",lang);}catch(e){}
   }
   function save(){
     persist();
@@ -791,6 +803,11 @@
       if(data.__cur){const f=CURRENCIES.find(x=>x.code===data.__cur);if(f)cur=f;}
       if(data.__lang==="es")lang="es";
     }
+    try{const sharedLang=localStorage.getItem("islaLang");if(sharedLang==="es"||sharedLang==="en")lang=sharedLang;}catch(e){}
+    try{const sharedTheme=localStorage.getItem("islaTheme");if(sharedTheme==="light"||sharedTheme==="dark"){
+      document.documentElement.setAttribute("data-theme",sharedTheme);
+      document.getElementById("logo").src=sharedTheme==="dark"?LOGO:LOGO_DARK;
+    }}catch(e){}
     setLang(lang);     // applies labels + builds currency options
     buildPresetOptions();
   })();
