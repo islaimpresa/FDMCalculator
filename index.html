@@ -28,7 +28,7 @@
   .wrap{max-width:860px;margin:0 auto}
   .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
   .brand{display:flex;align-items:center;gap:14px}
-  .brand img{height:62px;width:auto;display:block}
+  .brand img{height:32px;width:auto;display:block}
   .brand .tag{color:var(--muted);font-family:ui-monospace,Consolas,monospace;font-size:.78rem}
   .theme-btn{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);
     border-radius:999px;padding:8px 16px;cursor:pointer;font-size:.85rem;transition:.15s}
@@ -40,7 +40,7 @@
     border-radius:8px;padding:8px 14px;cursor:pointer;font-size:.85rem;transition:.15s}
   .toolbar button:hover{border-color:var(--accent);color:var(--accent)}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  @media(max-width:640px){.grid{grid-template-columns:1fr}body{padding:14px}.brand img{height:48px}}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}body{padding:14px}.brand img{height:32px}}
   .field{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow)}
   .field label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;
     text-transform:uppercase;letter-spacing:.04em}
@@ -165,13 +165,13 @@
   <div class="toolnav">
     <a href="https://islaimpresa.github.io/">← Isla Impresa</a>
     <span class="sep">•</span>
-    <a href="https://islaimpresa.github.io/SLACalculator/">Resin Calculator</a>
+    <a href="https://islaimpresa.github.io/SLACalculator/" id="navResin">Resin Calculator</a>
     <span class="sep">•</span>
-    <a href="https://islaimpresa.github.io/FilamentTracker/">Filament Tracker</a>
+    <a href="https://islaimpresa.github.io/FilamentTracker/" id="navTracker">Filament Tracker</a>
     <span class="sep">•</span>
-    <a href="https://islaimpresa.github.io/ResinTracker/">Resin Tracker</a>
+    <a href="https://islaimpresa.github.io/ResinTracker/" id="navRTracker">Resin Tracker</a>
     <span class="sep">•</span>
-    <a href="https://islaimpresa.github.io/UnitConverter/">Unit Converter</a>
+    <a href="https://islaimpresa.github.io/UnitConverter/" id="navConverter">Unit Converter</a>
   </div>
   <p class="sub"><b id="slogan">Technical Mastery. Creative Design. Made in Puerto Rico.</b><br><span id="subtext">Calculate the real cost and selling price of your printed parts.</span></p>
 
@@ -366,7 +366,8 @@
       saved:"Settings saved on this device.", noSave:"Could not save in this browser.",
       nothing:"Nothing saved yet.", calcFirst:"Calculate a cost first.",
       pdfTitle:"FDM Cost Calculator - Quote", pdfPlace:"Ponce, Puerto Rico", copyPrice:"Copy price", reverseMode:"Reverse: Budget → Quantity", reverseLbl:"How many prints for this budget?", budget:"Budget", lblBudget:"Budget ($)", reverseResult:"—", reverseUnitSing:"print", reverseUnitPlur:"prints", reverseFor:"for", reverseEach:"each", presetLblMat:"Quick presets:", discountLbl:"Bulk discount:", lblMinPrints:"Min prints", lblDiscount:"Discount %", discountMsg:"Enter quantity ≥ {0} to apply discount", discountApplied:"✓ {0}% discount applied!",
-      pdfSuggested:"Suggested selling price:", roundNone:"No rounding"
+      pdfSuggested:"Suggested selling price:", roundNone:"No rounding",
+      navResin:"Resin Calculator", navTracker:"Filament Tracker", navRTracker:"Resin Tracker", navConverter:"Unit Converter"
     },
     es:{
       tagline:"// calculadora de costos FDM",
@@ -395,7 +396,8 @@
       saved:"Configuración guardada en este dispositivo.", noSave:"No se pudo guardar en este navegador.",
       nothing:"No hay nada guardado todavía.", calcFirst:"Primero calcula un costo.",
       pdfTitle:"Calculadora de Costos FDM - Cotización", pdfPlace:"Ponce, Puerto Rico", copyPrice:"Copiar precio", reverseMode:"Inverso: Presupuesto → Cantidad", reverseLbl:"¿Cuántas piezas para este presupuesto?", budget:"Presupuesto", lblBudget:"Presupuesto ($)", reverseResult:"—", reverseUnitSing:"pieza", reverseUnitPlur:"piezas", reverseFor:"por", reverseEach:"cada una", presetLblMat:"Presets rápidos:", discountLbl:"Descuento por volumen:", lblMinPrints:"Mín. piezas", lblDiscount:"Descuento %", discountMsg:"Ingresa cantidad ≥ {0} para aplicar descuento", discountApplied:"✓ ¡{0}% descuento aplicado!",
-      pdfSuggested:"Precio de venta sugerido:", roundNone:"Sin redondeo"
+      pdfSuggested:"Precio de venta sugerido:", roundNone:"Sin redondeo",
+      navResin:"Calculadora de Resina", navTracker:"Rastreador de Filamento", navRTracker:"Rastreador de Resina", navConverter:"Conversor de Unidades"
     }
   };
 
@@ -487,6 +489,10 @@
     g("lblBulk").textContent=t("bulk");
     g("lblRound").textContent=t("round");
     g("roundNoneOpt").textContent=t("roundNone");
+    g("navResin").textContent=t("navResin");
+    g("navTracker").textContent=t("navTracker");
+    g("navRTracker").textContent=t("navRTracker");
+    g("navConverter").textContent=t("navConverter");
     g("wChipLbl").textContent=t("quick");
     g("watChipLbl").textContent=t("quick");
     g("qChipLbl").textContent=t("quick");
