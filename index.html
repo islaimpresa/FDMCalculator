@@ -172,6 +172,7 @@
   }
 </style>
 
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "FDM Cost Calculator", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Web browser", "url": "https://islaimpresa.github.io/FDMCalculator/", "description": "Free FDM 3D printing cost calculator: price a filament print by material, time, energy, labor and machine wear.", "inLanguage": ["en", "es"], "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Organization", "name": "Isla Impresa", "url": "https://islaimpresa.github.io/", "sameAs": ["https://www.instagram.com/islaimpresa/", "https://www.facebook.com/Islaimpresa/"], "@context": "https://schema.org"}}</script>
 </head>
 <body>
 <div class="wrap">
@@ -196,6 +197,10 @@
     <a href="https://islaimpresa.github.io/ResinTracker/" id="navRTracker">Resin Tracker</a>
     <span class="sep">•</span>
     <a href="https://islaimpresa.github.io/UnitConverter/" id="navConverter">Unit Converter</a>
+    <span class="sep">•</span>
+    <a href="https://islaimpresa.github.io/Troubleshooter/" id="navTrouble">Troubleshooter</a>
+    <span class="sep">•</span>
+    <a href="https://islaimpresa.github.io/MaterialSelector/" id="navMaterial">Material Selector</a>
   </div>
   <p class="sub"><b id="slogan">Technical Mastery. Creative Design. Made in Puerto Rico.</b><br><span id="subtext">Calculate the real cost and selling price of your printed parts.</span></p>
 
@@ -405,7 +410,7 @@
       nothing:"Nothing saved yet.", calcFirst:"Calculate a cost first.",
       pdfTitle:"FDM Cost Calculator - Quote", pdfPlace:"Ponce, Puerto Rico", copyPrice:"Copy price", reverseMode:"Reverse: Budget → Quantity", reverseLbl:"How many prints for this budget?", budget:"Budget", lblBudget:"Budget ($)", reverseResult:"—", reverseUnitSing:"print", reverseUnitPlur:"prints", reverseFor:"for", reverseEach:"each", presetLblMat:"Quick presets:", discountLbl:"Bulk discount:", lblMinPrints:"Min prints", lblDiscount:"Discount %", discountMsg:"Enter quantity ≥ {0} to apply discount", discountApplied:"✓ {0}% discount applied!",
       pdfSuggested:"Suggested selling price:", roundNone:"No rounding",
-      navResin:"Resin Calculator", navTracker:"Filament Tracker", navRTracker:"Resin Tracker", navConverter:"Unit Converter"
+      navResin:"Resin Calculator", navTracker:"Filament Tracker", navRTracker:"Resin Tracker", navConverter:"Unit Converter", navTrouble:"Troubleshooter", navMaterial:"Material Selector"
     },
     es:{
       tagline:"// calculadora de costos FDM",
@@ -435,7 +440,7 @@
       nothing:"No hay nada guardado todavía.", calcFirst:"Primero calcula un costo.",
       pdfTitle:"Calculadora de Costos FDM - Cotización", pdfPlace:"Ponce, Puerto Rico", copyPrice:"Copiar precio", reverseMode:"Inverso: Presupuesto → Cantidad", reverseLbl:"¿Cuántas piezas para este presupuesto?", budget:"Presupuesto", lblBudget:"Presupuesto ($)", reverseResult:"—", reverseUnitSing:"pieza", reverseUnitPlur:"piezas", reverseFor:"por", reverseEach:"cada una", presetLblMat:"Presets rápidos:", discountLbl:"Descuento por volumen:", lblMinPrints:"Mín. piezas", lblDiscount:"Descuento %", discountMsg:"Ingresa cantidad ≥ {0} para aplicar descuento", discountApplied:"✓ ¡{0}% descuento aplicado!",
       pdfSuggested:"Precio de venta sugerido:", roundNone:"Sin redondeo",
-      navResin:"Calculadora de Resina", navTracker:"Rastreador de Filamento", navRTracker:"Rastreador de Resina", navConverter:"Conversor de Unidades"
+      navResin:"Calculadora de Resina", navTracker:"Rastreador de Filamento", navRTracker:"Rastreador de Resina", navConverter:"Conversor de Unidades", navTrouble:"Diagnóstico", navMaterial:"Selector de Material"
     }
   };
 
@@ -539,6 +544,8 @@
     g("navTracker").textContent=t("navTracker");
     g("navRTracker").textContent=t("navRTracker");
     g("navConverter").textContent=t("navConverter");
+    g("navTrouble").textContent=t("navTrouble");
+    g("navMaterial").textContent=t("navMaterial");
     g("wChipLbl").textContent=t("quick");
     g("watChipLbl").textContent=t("quick");
     g("qChipLbl").textContent=t("quick");
